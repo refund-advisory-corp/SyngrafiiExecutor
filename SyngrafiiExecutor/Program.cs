@@ -90,6 +90,7 @@ namespace SyngrafiiExecutor
             req_file ToUpload = new req_file();
             ToUpload.fileName = PdfTempFilePath.Split('\\')[PdfTempFilePath.Split('\\').Length - 1]; 
             ToUpload.fileUrl = PdfTempFilePath; //WIP!!! the files need to already exist in SYNGRAFII and then are uploaded to the user's account! I think! This will need to be fixed in placeholder!
+            //MPA 9/14/2020 may become vestigial
 
             
             
@@ -105,10 +106,24 @@ namespace SyngrafiiExecutor
             //request.AddBody();
 
             //var response = client.Execute(request);
-            dynamic whatreturns = await client.AddFile(ToUpload.fileName, ToUpload.fileUrl);
+            //MPA 9/14/2020
 
-            SyngrafiiHttpClient client2 = new SyngrafiiHttpClient(@"https://sign.syngrafii.com/api/v1", PackageAddAPIkey);
-            dynamic whatreturns2 = await client2.AddPackage();
+            //WIP REENABLE!!!!
+            //FileAdded_Result whatreturns = await client.AddFile(ToUpload.fileName, ToUpload.fileUrl); //MPA 9/14/2020 this may become vestigial
+            //string KeepFileId = whatreturns.files[0].fileId;
+            
+
+            //MPA 9/11/2020
+            //WIP: Insert a part here that goes to SQL to get details to populate AddPackageHelper
+            AddPackageHelper APH = new AddPackageHelper();
+
+            //MPA 9/14/2020
+            APH.UploadPDFfile = ToUpload.fileUrl;
+
+            SyngrafiiHttpClient client2 = new SyngrafiiHttpClient(@"https://sign.syngrafii.com/api/v1", PackageAddAPIkey); //Works!
+            PackageAdded_Result whatreturns2 = await client2.AddPackage(APH);
+
+
 
             //if (response.IsSuccessful)
             //{

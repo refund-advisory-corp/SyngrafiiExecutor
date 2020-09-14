@@ -23,13 +23,14 @@ namespace SyngrafiiExecutor
             {
                 using (StreamWriter writer = File.CreateText(ErrorLogFilePath0))
                 {
-                    writer.WriteLine("--Error Log for REFFORMZ program--");
+                    writer.WriteLine("--Error Log for Syngrafii Executor program--");
                 }
             }
             using (StreamWriter writer2 = File.AppendText(ErrorLogFilePath0))
             {
                 writer2.WriteLine("----------------------------------------------------------------------");
 
+                writer2.WriteLine("Date: " + DateTime.Now.ToLongDateString() + " " + DateTime.Now.ToLongTimeString());
                 foreach (string Info in Infos)
                 {
                     writer2.WriteLine(Info);

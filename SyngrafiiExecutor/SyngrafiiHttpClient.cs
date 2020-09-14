@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Net.Http;
+using System.Xml;
+using System.IO;
 using Newtonsoft.Json;
 
 namespace SyngrafiiExecutor
@@ -19,7 +21,7 @@ namespace SyngrafiiExecutor
             // Base Url
             _httpClient.BaseAddress = new Uri(new Uri(instanceUrl, UriKind.Absolute), "/api/v1/");
         }
-        public async Task<dynamic> AddPackage()
+        public async Task<PackageAdded_Result> AddPackage(AddPackageHelper APH)
         {
 
             try
@@ -27,13 +29,29 @@ namespace SyngrafiiExecutor
                 // Add Package Request
                 var request = new
                 {
-                    Name = "New Package",
-                    Signers = new[] {
-                    new  { FirstName = "Signer", LastName = "One", Email = "testsigner@syngrafii.com" }
-                },
+                    Name = "API Call Package",
+
+                    //MPA 9/11/2020
+                    Type = "video_closing_room",
+                    //State = "open", //draft is another option //forbidden
+                    /*
+                    Options = new[] { new {
+                        MeetingVideoRecordingAuto = false,
+                        MeetingVideoRecordingDisabled = false,
+                        NotifyMeeting = true,
+                        NotifyMeetingIcsAttachment = true} },
+                    */
+                    Meeting = new[] { new { TimeStart = DateTime.Now.ToString("yyyy/MM/ddTHH:mm")
+                                        , Duration = XmlConvert.ToString(TimeSpan.FromHours(1)) // ISO 8601 Duration
+                                        , isPrivate = true} },
+                    Signers = new object[] { //WAS just new[], changed to relieve error MPA 9/11/2020
+                        new  { FirstName = "Michael", LastName = "Andro", Email = "michaelandro94@gmail.com", Role = "host", SignCac = true } //MPA 9/11/2020 added role and signcac
+                       ,new { FirstName = "Leahcim", LastName = "Ordna", Email = "michaelandro@hotmail.com" } //MPA 9/11/2020
+                    },
                     Documents = new[]
                     {
-                    new { fileUrl = "https://download.syngrafii.com/test/agreement.pdf" }
+                    new { //fileUrl = "https://download.syngrafii.com/test/agreement.pdf"
+                            fileData = File.ReadAllBytes(APH.UploadPDFfile)}
                 }
                 };
                 // Serialize Json
@@ -41,7 +59,12 @@ namespace SyngrafiiExecutor
                 // Post Request
                 var response = await _httpClient.PostAsync("packages/add", message);
                 response.EnsureSuccessStatusCode();
-                return JsonConvert.DeserializeObject(await response.Content.ReadAsStringAsync());
+
+                //return JsonConvert.DeserializeObject(await response.Content.ReadAsStringAsync());
+                //MPA 9/14/2020
+                dynamic content = JsonConvert.DeserializeObject<dynamic>(await response.Content.ReadAsStringAsync());
+                PackageAdded_Result Presult = JsonConvert.DeserializeObject<PackageAdded_Result>(JsonConvert.SerializeObject(content));
+                return Presult;
             }
             catch (Exception Ex)
             {
@@ -56,7 +79,7 @@ namespace SyngrafiiExecutor
             return await _httpClient.GetAsync($"packages/{packageId}");
         }
 
-        public async Task<dynamic> AddFile(string FileName, string FileUrl)
+        public async Task<FileAdded_Result> AddFile(string TheFileName, string TheFileUrl)
         {
             DebugClass.Jot(new List<string>() { "Test" });
 
@@ -67,16 +90,22 @@ namespace SyngrafiiExecutor
                 {
                     files = new[]
                     {
-                        new { fileName = FileName, fileUrl = FileUrl }
+                        new { FileName = TheFileName, FileData = File.ReadAllBytes(TheFileUrl) }
                     }
                 };
+                //MPA 9/14/2020 note that guide suggests must post file with content-type of application/pdf to work.
+
                 // Serialize Json
                 var message = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
                 // Post Request
                 var response = await _httpClient.PostAsync("files/add", message);
                 response.EnsureSuccessStatusCode();
                 DebugClass.Jot(new List<string>() { "Successful file add!"});
-                return JsonConvert.DeserializeObject(await response.Content.ReadAsStringAsync());
+
+                //MPA 9/14/2020 Now returns as FileAdded_Result
+                dynamic content =  JsonConvert.DeserializeObject<dynamic>(await response.Content.ReadAsStringAsync());
+                FileAdded_Result Fresult = JsonConvert.DeserializeObject<FileAdded_Result>(JsonConvert.SerializeObject(content));
+                return Fresult;
             }
             catch (Exception Ex)
             {
