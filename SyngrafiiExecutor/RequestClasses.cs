@@ -14,6 +14,7 @@ namespace SyngrafiiExecutor
 
     public class AddPackageHelper
     {
+        public string UploadedPDFid { get; set; }
         public string UploadPDFfile { get; set; }
         public string Owner1Email { get; set; }
         public string Owner2Email { get; set; }
@@ -24,6 +25,6 @@ namespace SyngrafiiExecutor
         public bool Owner1Present { get; set; }
         public bool Owner2Present { get; set; }
         public bool Owner1Sign { get; set; }
-        public bool OWner2Sign { get; set; }
+        public bool Owner2Sign { get; set; }
     }
 }

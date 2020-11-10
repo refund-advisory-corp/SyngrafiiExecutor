@@ -23,37 +23,85 @@ namespace SyngrafiiExecutor
         }
         public async Task<PackageAdded_Result> AddPackage(AddPackageHelper APH)
         {
+            object request; //request *was* initialized as var without conditional MPA 9/15/2020
 
             try
             {
-                // Add Package Request
-                var request = new
+                //MPA 9/15/2020 Conditional for how initial document is included
+                if (!string.IsNullOrEmpty(APH.UploadPDFfile))
                 {
-                    Name = "API Call Package",
+                    // Add Package Request
+                    request = new
+                    {
+                        Name = "API Call Package",
 
-                    //MPA 9/11/2020
-                    Type = "video_closing_room",
-                    //State = "open", //draft is another option //forbidden
-                    /*
-                    Options = new[] { new {
-                        MeetingVideoRecordingAuto = false,
-                        MeetingVideoRecordingDisabled = false,
-                        NotifyMeeting = true,
-                        NotifyMeetingIcsAttachment = true} },
-                    */
-                    Meeting = new[] { new { TimeStart = DateTime.Now.ToString("yyyy/MM/ddTHH:mm")
+                        //MPA 9/11/2020
+                        Type = "video_closing_room",
+                        //State = "open", //draft is another option //forbidden
+                        /*
+                        Options = new[] { new {
+                            MeetingVideoRecordingAuto = false,
+                            MeetingVideoRecordingDisabled = false,
+                            NotifyMeeting = true,
+                            NotifyMeetingIcsAttachment = true} },
+                        */                        
+                        
+                        //MPA 11/10/2020
+                        GenerateSignerLinks = "True",
+
+                        Meeting = new[] { new { TimeStart = DateTime.Now.ToString("yyyy/MM/ddTHH:mm")
                                         , Duration = XmlConvert.ToString(TimeSpan.FromHours(1)) // ISO 8601 Duration
                                         , isPrivate = true} },
-                    Signers = new object[] { //WAS just new[], changed to relieve error MPA 9/11/2020
+                        Signers = new object[] { //WAS just new[], changed to relieve error MPA 9/11/2020
+                        new  { FirstName = "Michael", LastName = "Andro", Email = "michaelandro94@gmail.com", Role = "host", SignCac = true } //MPA 9/11/2020 added role and signcac
+                       ,new { FirstName = "Leahcim", LastName = "Ordna", Email = "michaelandro@hotmail.com" } //MPA 9/11/2020
+                        },
+                            Documents = new[]
+                            {
+                                new { //fileUrl = "https://download.syngrafii.com/test/agreement.pdf"
+                                      fileData = File.ReadAllBytes(APH.UploadPDFfile)
+                                    //fileId = APH.UploadPDFfile
+                                }
+                            }
+                    };
+                }
+                else if (!string.IsNullOrEmpty(APH.UploadedPDFid))
+                {
+                    // Add Package Request
+                    request = new
+                    {
+                        Name = "API Call Package",
+
+                        //MPA 9/11/2020
+                        Type = "video_closing_room",
+                        //State = "open", //draft is another option //forbidden
+                        /*
+                        Options = new[] { new {
+                            MeetingVideoRecordingAuto = false,
+                            MeetingVideoRecordingDisabled = false,
+                            NotifyMeeting = true,
+                            NotifyMeetingIcsAttachment = true} },
+                        */
+                        Meeting = new[] { new { TimeStart = DateTime.Now.ToString("yyyy/MM/ddTHH:mm")
+                                        , Duration = XmlConvert.ToString(TimeSpan.FromHours(1)) // ISO 8601 Duration
+                                        , isPrivate = true} },
+                        Signers = new object[] { //WAS just new[], changed to relieve error MPA 9/11/2020
                         new  { FirstName = "Michael", LastName = "Andro", Email = "michaelandro94@gmail.com", Role = "host", SignCac = true } //MPA 9/11/2020 added role and signcac
                        ,new { FirstName = "Leahcim", LastName = "Ordna", Email = "michaelandro@hotmail.com" } //MPA 9/11/2020
                     },
-                    Documents = new[]
-                    {
+                        Documents = new[]
+                        {
                     new { //fileUrl = "https://download.syngrafii.com/test/agreement.pdf"
-                            fileData = File.ReadAllBytes(APH.UploadPDFfile)}
+                          //fileData = File.ReadAllBytes(APH.UploadPDFfile)
+                            fileId = APH.UploadedPDFid}
                 }
-                };
+                    };
+                }
+                else
+                {
+                    throw new Exception("Must have an initial form.");
+                }
+
                 // Serialize Json
                 var message = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
                 // Post Request
@@ -64,6 +112,11 @@ namespace SyngrafiiExecutor
                 //MPA 9/14/2020
                 dynamic content = JsonConvert.DeserializeObject<dynamic>(await response.Content.ReadAsStringAsync());
                 PackageAdded_Result Presult = JsonConvert.DeserializeObject<PackageAdded_Result>(JsonConvert.SerializeObject(content));
+
+                //MPA 11/6/2020
+                DebugClass.Jot(new List<string>() { Presult.package.signers[0].meetingLink.ToString() });
+
+
                 return Presult;
             }
             catch (Exception Ex)

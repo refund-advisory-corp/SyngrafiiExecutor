@@ -106,11 +106,10 @@ namespace SyngrafiiExecutor
             //request.AddBody();
 
             //var response = client.Execute(request);
-            //MPA 9/14/2020
 
-            //WIP REENABLE!!!!
-            //FileAdded_Result whatreturns = await client.AddFile(ToUpload.fileName, ToUpload.fileUrl); //MPA 9/14/2020 this may become vestigial
-            //string KeepFileId = whatreturns.files[0].fileId;
+            //MPA 9/14/2020
+            FileAdded_Result whatreturns = await client.AddFile(ToUpload.fileName, ToUpload.fileUrl); //MPA 9/14/2020 this may become vestigial
+            string KeepFileId = whatreturns.files[0].fileId;
             
 
             //MPA 9/11/2020
@@ -118,8 +117,8 @@ namespace SyngrafiiExecutor
             AddPackageHelper APH = new AddPackageHelper();
 
             //MPA 9/14/2020
-            APH.UploadPDFfile = ToUpload.fileUrl;
-
+            //APH.UploadPDFfile = ToUpload.fileUrl;
+            APH.UploadedPDFid = KeepFileId;
             SyngrafiiHttpClient client2 = new SyngrafiiHttpClient(@"https://sign.syngrafii.com/api/v1", PackageAddAPIkey); //Works!
             PackageAdded_Result whatreturns2 = await client2.AddPackage(APH);
 
