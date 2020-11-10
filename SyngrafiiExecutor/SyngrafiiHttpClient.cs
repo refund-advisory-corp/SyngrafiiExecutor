@@ -114,7 +114,7 @@ namespace SyngrafiiExecutor
                 PackageAdded_Result Presult = JsonConvert.DeserializeObject<PackageAdded_Result>(JsonConvert.SerializeObject(content));
 
                 //MPA 11/6/2020
-                DebugClass.Jot(new List<string>() { Presult.package.signers[0].meetingLink.ToString() });
+                //DebugClass.Jot(new List<string>() { Presult.package.signers[0].meetingLink.ToString() });
 
 
                 return Presult;
