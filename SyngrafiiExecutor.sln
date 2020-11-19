@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.28307.539
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SyngrafiiExecutor", "SyngrafiiExecutor\SyngrafiiExecutor.csproj", "{5422D1B7-5247-44F0-89DC-78932F922835}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SyngrafiiStitchUpdate", "SyngrafiiStitchUpdate\SyngrafiiStitchUpdate\SyngrafiiStitchUpdate.csproj", "{B2C702D0-5996-4C77-AB76-882C7FBF40C5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{5422D1B7-5247-44F0-89DC-78932F922835}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5422D1B7-5247-44F0-89DC-78932F922835}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5422D1B7-5247-44F0-89DC-78932F922835}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B2C702D0-5996-4C77-AB76-882C7FBF40C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2C702D0-5996-4C77-AB76-882C7FBF40C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B2C702D0-5996-4C77-AB76-882C7FBF40C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2C702D0-5996-4C77-AB76-882C7FBF40C5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
